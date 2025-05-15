@@ -76,7 +76,7 @@ def calculate():
         window_culc.title('RVI culculation') # название окна
         rvi = RVI_culc(path) # расчет индекса
         last_culc = rvi # глобальная переменная для сохранения результата
-        plot_index(rvi, "RVI") # построение графика matplotlib    
+        plot_index(rvi, "RVI", 0, 10) # построение графика matplotlib    
         
     # Если выбран EVI
     if index == 'EVI':
@@ -136,11 +136,6 @@ def get_prediction(img_path):
     
 # Функция построение графика matplotlib
 def plot_index(index_culc, index_name, norm_min=-1, norm_max=1):
-    
-    if index_culc.min()>-1:
-        norm_min = index_culc.min()
-    if index_culc.max()<1:
-        norm_max = index_culc.max()
         
     if os.path.exists('./data')==False:
         os.makedirs('./data') 
@@ -148,10 +143,9 @@ def plot_index(index_culc, index_name, norm_min=-1, norm_max=1):
     fig, ax = plt.subplots(num=1,clear=True)
     norm = plt.Normalize(norm_min, norm_max, clip=True)
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["red","orange","yellow","green"])
-    #mask = get_prediction(path)
-    #masked = np.ma.masked_where(mask == 1, index_culc)
-    #plt.imshow(masked, norm=norm, cmap=cmap)
-    plt.imshow(index_culc, norm=norm, cmap=cmap)
+    mask = get_prediction(path)
+    masked = np.ma.masked_where(mask == 1, index_culc)
+    plt.imshow(masked, norm=norm, cmap=cmap)
     plt.colorbar(label=index_name)
     plt.savefig('data/1.png')
     
